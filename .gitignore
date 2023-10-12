@@ -1,0 +1,185 @@
+##################
+# Generic security
+.env
+.git
+
+########################
+# Infrastructure-as-code
+
+## Terraform
+.terraform
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+.variables.tf
+.providers.tf
+**/variables.tf
+**/providers.tf
+**/backend.tf
+**/*.zip
+.terraform.lock.hcl
+
+## Ansible
+*.retry
+
+#######
+# OSes
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+########
+# IDEs
+
+## VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+.history/
+*.vsix
+
+## JetBrains Fleet
+.fleet/
+
+## JetBrains IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+*.log
+**/additional-spring-configuration-metadata.json
+
+## STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+###########
+# Languages
+
+## Node: npm, yarn v1
+**/node_modules/
+**/build/
+**/dist/
+.npm
+.eslintcache
+.env.development.local
+.env.production.local
+.env.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+## Node: yarn v2 (PnP)
+**/.pnp.*
+**/.yarn/*
+!**/.yarn/patches
+!**/.yarn/plugins
+!**/.yarn/releases
+!**/.yarn/sdks
+!**/.yarn/versions
+
+## Node: testing
+.env.test.local
+cypress.env.json
+**/coverage/
+
+## Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+build/
+*venv/
+
+## Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+pom.xml.bak
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+*.versionsBackup
+
+## Java
+.mtj.tmp/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+
+## Golang
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+go.work
+
+## Rust
+target/ #same as Maven 
+debug/
+**/*.rs.bk
+*.pdb
+Cargo.lock #remove for libs building
+
+## TODO
+todo
+
+## Cache
+_cache/*
+*/_cache/*
+
+## Testing Certs
+certs/*
+**/certs/*

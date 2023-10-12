@@ -1,0 +1,20 @@
+name: Run test jobs to validate with YSNP
+on: workflow_dispatch
+
+jobs:
+  Test-job-default-conf-ask-mfa-YSNP:
+    runs-on: self-hosted
+    steps:
+      - name: Check out Repository
+        uses: actions/checkout@v4
+      - run: echo "Job is run after YSNP verification using default checks - fallbacked to user check!"
+
+  Test-job-image-check-YSNP:
+    runs-on: self-hosted
+    container:
+      image: alpine:3.18.4@sha256:eece025e432126ce23f223450a0326fbebde39cdf496a85d8c016293fc851978
+    steps:
+      - name: Check out Repository
+        uses: actions/checkout@v4
+      - run: |
+          echo "Job is run after YSNP verification using image + job checks!"

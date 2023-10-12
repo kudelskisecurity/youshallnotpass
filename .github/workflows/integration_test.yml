@@ -1,0 +1,98 @@
+name: YouShallNotPass Integration Test
+run-name: Running YouShallNotPass Integration Tests
+on:
+    pull_request:
+        types: [opened, edited, ready_for_review, reopened, synchronize]
+jobs:
+    hashicorp-integration-test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out Repository
+              uses: actions/checkout@v4
+
+            - name: Set Up Docker
+              uses: docker/setup-buildx-action@v3
+
+            - name: Set Up Docker Compose
+              uses: ndeloof/install-compose-action@v0.0.1
+
+            - name: Run Hashicorp Integration Test
+              run: ./testing/test.sh integration hashicorpclient
+
+    mattermost-integration-test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out Repository
+              uses: actions/checkout@v4
+
+            - name: Set Up Docker
+              uses: docker/setup-buildx-action@v3
+
+            - name: Set Up Docker Compose
+              uses: ndeloof/install-compose-action@v0.0.1
+
+            - name: Run Mattermost Integration Test
+              run: ./testing/test.sh integration mattermostclient
+
+    hashicorp-gitlab-automatic-test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out Repository
+              uses: actions/checkout@v4
+
+            - name: Set Up Docker
+              uses: docker/setup-buildx-action@v3
+
+            - name: Set Up Docker Compose
+              uses: ndeloof/install-compose-action@v0.0.1
+
+            - name: Run Hashicorp Gitlab Automatic Integration Test
+              run: ./testing/test.sh integration hashicorpgitlabautomatic
+
+    hashicorp-gitlab-failure-test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out Repository
+              uses: actions/checkout@v4
+
+            - name: Set Up Docker
+              uses: docker/setup-buildx-action@v3
+
+            - name: Set Up Docker Compose
+              uses: ndeloof/install-compose-action@v0.0.1
+
+            - name: Run Hashicorp Gitlab Failure Integration Test
+              run: ./testing/test.sh integration hashicorpgitlabfail
+
+    # I cannot figure out a way to automate the authentication integration test, which is
+    # probably a good thing.
+
+    hashicorp-gitlab-auth-timeout-test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out Repository
+              uses: actions/checkout@v4
+
+            - name: Set Up Docker
+              uses: docker/setup-buildx-action@v3
+
+            - name: Set Up Docker Compose
+              uses: ndeloof/install-compose-action@v0.0.1
+
+            - name: Run Hashicorp Gitlab Auth Timeout Integration Test
+              run: ./testing/test.sh integration hashicorpgitlabtimeout
+
+    hashicorp-gitlab-bash-test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out Repository
+              uses: actions/checkout@v4
+
+            - name: Set Up Docker
+              uses: docker/setup-buildx-action@v3
+
+            - name: Set Up Docker Compose
+              uses: ndeloof/install-compose-action@v0.0.1
+
+            - name: Run Hashicorp Gitlab Bash Integration Test
+              run: ./testing/test.sh integration hashicorpgitlabbash
