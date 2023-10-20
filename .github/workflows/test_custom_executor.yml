@@ -18,3 +18,10 @@ jobs:
         uses: actions/checkout@v4
       - run: |
           echo "Job is run after YSNP verification using image + job checks!"
+
+  Test-job-only-ask-mfa-YSNP:
+    runs-on: self-hosted
+    steps:
+      - name: Check out Repository
+        uses: actions/checkout@v4
+      - run: echo "Job is run after YSNP verification using only user check!"

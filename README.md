@@ -497,19 +497,18 @@ Currently, we are experimenting with Github support for YouShallNotPass. This Gi
 
 ### Setup
 
-Note that the current limitation is this works for public repositories. For private repos, you will need to modify the `before_script.sh` to provide the appropriate token.
+1. Follow [GitHub Self-Hosted Runner Instructions](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners)
 
-0. Follow [GitHub Self-Hosted Runner Instructions](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners)
+2. Download the relevant release from the release section of this project, copy and extract the contents into another folder than actions-runner on your GitHub runner.
 
-1. Download the relevant release from the release section of this project, copy and extract the contents into another folder than actions-runner on your GitHub runner. The following scripts should now exist in the actions-runner folder of your GitHub runner.
+  - before_script.sh
+  - generate_jwt.sh
+  - profile.sh
+  - youshallnotpass
 
-  - before_script.sh <- from YouShallNotPass
-  - generate_jwt.sh <- from YouShallNotPass
-  - profile.sh <- from YouShallNotPass
+3. Make sure before_script.sh, generate_jwt.sh, and profile.sh have the correct execution privileges (namely make sure they can be executed).
 
-2. Make sure before_script.sh, generate_jwt.sh, and profile.sh have the correct execution privileges (namely make sure they can be executed).
-
-3. Edit the .env file from the actions-runner folder to contain the following:
+4. Edit the .env file from the actions-runner folder to contain the following:
 
 ```sh
 ACTIONS_RUNNER_HOOK_JOB_STARTED=/your/absolute/path/to/before_script.sh
@@ -517,15 +516,15 @@ ACTIONS_RUNNER_HOOK_JOB_STARTED=/your/absolute/path/to/before_script.sh
 
 According to [GitHub documentation](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/running-scripts-before-or-after-a-job#triggering-the-scripts), these scripts should not be in the actions-runner folder.
 
-4. Run before_script.sh to download the necessary dependencies and generate a public-private key pair for the runner.
+5. Run before_script.sh to download the necessary dependencies and generate a public-private key pair for the runner.
 
-5. Enable JWT Authentication with your Hashicorp Vault Instance
+6. Enable JWT Authentication with your Hashicorp Vault Instance
 
 ```sh
 vault auth enable -path=jwt/github.com jwt
 ```
 
-6. Configure JWT authentication to use the public key you just generated in the *certs/public-key.pem* file.
+7. Configure JWT authentication to use the public key you just generated in the *certs/public-key.pem* file.
 
 ```sh
 vault write auth/jwt/github.com/config \
@@ -534,7 +533,7 @@ vault write auth/jwt/github.com/config \
   jwt_validation_pubkeys="$(cat path/to/certs/public-key.pem)"
 ```
 
-7. Configure the default role you created in step 6 using your GitLab projects namespace path.
+8. Configure the default role you created in step 6 using your GitLab projects namespace path.
 
 ```sh
 vault write auth/jwt/github.com/role/your-default-role -<<EOF
@@ -557,7 +556,7 @@ vault write auth/jwt/github.com/role/your-default-role -<<EOF
 EOF
 ```
 
-8. Write a vault policy for the jwt login that establishes a project whitelist, namespace whitelist, and scratch path with the following capabilities
+9. Write a vault policy for the jwt login that establishes a project whitelist, namespace whitelist, and scratch path with the following capabilities
 
 ```sh
 JWT_ACCESSOR=$(vault auth list -format=json | jq -r '.["jwt/github.com/"].accessor')
@@ -583,13 +582,13 @@ EOF
 vault policy write github policy.hcl
 ```
 
-9. Enable the secrets kv storage at the mount root in step 8
+10. Enable the secrets kv storage at the mount root in step 8
 
 ```sh
 vault secrets enable -path=your_mount_root kv
 ```
 
-10. Write a list of namespace allowed images to the namespace whitelist
+11. Write a list of namespace allowed images to the namespace whitelist
 
 ```sh
 echo -n '{
@@ -601,7 +600,7 @@ echo -n '{
 }' | vault kv put your_mount_root/your_github_username_or_organization/whitelist -
 ```
 
-11. Write a list of project allowed images and scripts to the project whitelist
+12. Write a list of project allowed images and scripts to the project whitelist
 
 ```sh
 echo -n '{
@@ -618,7 +617,7 @@ echo -n '{
 }' | vault kv put your_mount_root/your_github_username_or_organization/project_name/whitelist -
 ```
 
-12. Update the profile.sh information from the GitHub executor.
+13. Update the profile.sh information from the GitHub executor.
 
 ```sh
 export YOUSHALLNOTPASS_VAULT_ROOT="your_mount_root"
@@ -628,7 +627,9 @@ export VAULT_ADDR="http://your_vault_address"
 export VAULT_EXTERNAL_ADDR="Same as Vault Addr, only different for local testing"
 ```
 
-13. update your GitHub workflows to utilize the new custom runner
+Set the two variables `GITHUB_USER` and `GITHUB_TOKEN` if the repo is private.
+
+14. Update your GitHub workflows to utilize the new custom runner
 
 ```yaml
 name: GitHub Actions Test
@@ -641,6 +642,24 @@ jobs:
       - ...
 ```
 
+15. Optionally, configure which checks YouShallNotPass should do as described in [Project Configuration Options](#project-configuration-options).
+
+For example, if you want the job `Test-Action` above to only have MFA check, push the following config to Vault
+
+```sh
+echo -n '{
+  "jobs": [
+    {
+      "jobName": "Test-Action",
+      "checks": [
+        {
+          "name": "mfaRequired"
+        }
+      ]
+    }
+  ]
+}' | vault kv put your_mount_root/your_github_username_or_organization/project_name/youshallnotpass_config -
+```
 
 ## Building From Source
 

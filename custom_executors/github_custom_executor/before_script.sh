@@ -67,7 +67,12 @@ export CI_USER_EMAIL="$GITHUB_ACTOR"
 
 # Clone the workflow's repo
 if [[ ! -d "${GITHUB_WORKSPACE}" || -z "${GITHUB_WORKSPACE}" ]]; then
-    git clone "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" "${GITHUB_WORKSPACE}"
+    # set those variables in profile.sh to git clone a private repo
+    if [ -n "${GITHUB_USER}" ] && [ -n "${GITHUB_TOKEN}" ]; then
+        git clone "https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}" "${GITHUB_WORKSPACE}"
+    else
+        git clone "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" "${GITHUB_WORKSPACE}"
+    fi
 fi
 
 # Checkout the current sha
