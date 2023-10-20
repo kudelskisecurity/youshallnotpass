@@ -66,13 +66,24 @@ export CI_JOB_NAME="$GITHUB_JOB"
 export CI_USER_EMAIL="$GITHUB_ACTOR"
 
 # Clone the workflow's repo
-if [[ ! -d "${GITHUB_WORKSPACE}" || -z "${GITHUB_WORKSPACE}" ]]; then
+# For some reason, the repo is not yet cloned at this stage and GITHUB_TOKEN is not available
+# TODO: improve me
+if [[ ! -d "${GITHUB_WORKSPACE}" || -z "$(ls -A ${GITHUB_WORKSPACE})" ]]; then
     # set those variables in profile.sh to git clone a private repo
     if [ -n "${GITHUB_USER}" ] && [ -n "${GITHUB_TOKEN}" ]; then
         git clone "https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}" "${GITHUB_WORKSPACE}"
     else
         git clone "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" "${GITHUB_WORKSPACE}"
     fi
+else
+    # repo already exists, force update it
+    cd "${GITHUB_WORKSPACE}"
+    if [ -n "${GITHUB_USER}" ] && [ -n "${GITHUB_TOKEN}" ]; then
+        git remote set-url origin "https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}"
+    fi
+    git fetch --all
+    # fails sometimes...
+    # git reset --hard "${GITHUB_REF}"
 fi
 
 # Checkout the current sha
