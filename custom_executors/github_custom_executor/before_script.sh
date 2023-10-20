@@ -71,7 +71,7 @@ export CI_USER_EMAIL="$GITHUB_ACTOR"
 # sometimes, the repo directory does not contain the .git directory anymore
 # sometimes, the git remote -v are erased which breaks for private repos
 # TODO: improve me - or improve the github runner itself? https://github.com/actions/runner/issues
-# shellcheck disable=SC2086  # not sure how to keep the ls -A simple
+# shellcheck disable=SC2086
 if [[ ! -d "${GITHUB_WORKSPACE}" || -z "$(ls -A ${GITHUB_WORKSPACE})" ]]; then
     # set those variables in profile.sh to git clone a private repo
     if [ -n "${GITHUB_USER}" ] && [ -n "${GITHUB_TOKEN}" ]; then
