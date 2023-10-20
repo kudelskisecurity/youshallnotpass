@@ -66,8 +66,11 @@ export CI_JOB_NAME="$GITHUB_JOB"
 export CI_USER_EMAIL="$GITHUB_ACTOR"
 
 # Clone the workflow's repo
-# For some reason, the repo is not yet cloned at this stage and GITHUB_TOKEN is not available
-# TODO: improve me
+# For some reason, the repo is not yet cloned at this stage at the very first run and GITHUB_TOKEN is not available
+# Next runs (might?) have the repo locally due to some caching(?) but not the latest version
+# sometimes, the repo directory does not contain the .git directory anymore
+# sometimes, the git remote -v are erased which breaks for private repos
+# TODO: improve me - or improve the github runner itself? https://github.com/actions/runner/issues
 if [[ ! -d "${GITHUB_WORKSPACE}" || -z "$(ls -A ${GITHUB_WORKSPACE})" ]]; then
     # set those variables in profile.sh to git clone a private repo
     if [ -n "${GITHUB_USER}" ] && [ -n "${GITHUB_TOKEN}" ]; then
@@ -76,14 +79,24 @@ if [[ ! -d "${GITHUB_WORKSPACE}" || -z "$(ls -A ${GITHUB_WORKSPACE})" ]]; then
         git clone "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" "${GITHUB_WORKSPACE}"
     fi
 else
-    # repo already exists, force update it
+    # directory already exists, force update it
     cd "${GITHUB_WORKSPACE}"
-    if [ -n "${GITHUB_USER}" ] && [ -n "${GITHUB_TOKEN}" ]; then
-        git remote set-url origin "https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}"
-    fi
-    git fetch --all
-    # fails sometimes...
-    # git reset --hard "${GITHUB_REF}"
+    # sometimes, the .git directory does no longer exist...
+    if [ ! -d ".git" ]; then
+        cd ..
+        sudo rm -rf "${GITHUB_WORKSPACE}"
+        if [ -n "${GITHUB_USER}" ] && [ -n "${GITHUB_TOKEN}" ]; then
+            git clone "https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}" "${GITHUB_WORKSPACE}"
+        else
+            git clone "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" "${GITHUB_WORKSPACE}"
+        fi
+    else
+        if [ -n "${GITHUB_USER}" ] && [ -n "${GITHUB_TOKEN}" ]; then
+            git remote set-url origin "https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}"
+        fi
+        git fetch --all
+        # fails sometimes...
+        # git reset --hard "${GITHUB_REF}"
 fi
 
 # Checkout the current sha
