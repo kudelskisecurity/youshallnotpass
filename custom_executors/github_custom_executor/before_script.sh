@@ -97,6 +97,7 @@ else
         git fetch --all
         # fails sometimes...
         # git reset --hard "${GITHUB_REF}"
+    fi
 fi
 
 # Checkout the current sha
