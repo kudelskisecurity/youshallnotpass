@@ -60,7 +60,7 @@ func Commands() []*cli.Command {
 				},
 				&cli.StringFlag{
 					Name:        "ci-user-email",
-					EnvVars:     []string{"CI_USER_EMAIL"},
+					EnvVars:     []string{"CI_USER_EMAIL", "CUSTOM_ENV_GITLAB_USER_EMAIL"},
 					Value:       "shared",
 					DefaultText: "Email of the User Executing the CI job (Username on GitHub)",
 				},
