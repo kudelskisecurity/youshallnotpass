@@ -1,0 +1,22 @@
+version: "3"
+services:
+  vault:
+    image: hashicorp/vault
+    ports:
+      - 8200:8200
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: "1234567890"
+      VAULT_ADDR: "http://vault:8200"
+      VAULT_TOKEN: "1234567890"
+
+  vault-init:
+    image: hashicorp/vault
+    command: ["/vault-init.sh"]
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: "1234567890"
+      VAULT_ADDR: "http://vault:8200"
+      VAULT_TOKEN: "1234567890"
+    volumes:
+      - ../../../scripts/vault-init.sh:/vault-init.sh
+    depends_on:
+      - vault

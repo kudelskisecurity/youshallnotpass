@@ -1,0 +1,19 @@
+name: YouShallNotPass Unit Test
+run-name: Running YouShallNotPass Unit Tests
+on: [push]
+jobs:
+    golang-unit-test:
+        runs-on: ubuntu-latest
+        container:
+            image: golang:alpine3.18@sha256:7839c9f01b5502d7cb5198b2c032857023424470b3e31ae46a8261ffca72912a
+        steps:
+            - name: Check out Repository
+              uses: actions/checkout@v4
+
+            - name: Add Bash Dependencies
+              run: |
+                apk update
+                apk add bash
+
+            - name: Execute Bash Testing Script
+              run: ./testing/test.sh unit

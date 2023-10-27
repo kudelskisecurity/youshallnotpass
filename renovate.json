@@ -1,0 +1,19 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "prConcurrentLimit": 5,
+  "packageRules": [
+  {
+    "packagePatterns": [ "eslint", "prettier" ],
+    "groupName": "lint"
+  },
+  {
+    "matchPackagePatterns": [ "golang" ],
+    "groupName": "golang"
+  }
+  ],
+  "npmrc": "//https://registry.npmjs.org/"
+}
+

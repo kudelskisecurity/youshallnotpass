@@ -1,0 +1,23 @@
+name: YouShallNotPass Linter
+run-name: Linting YouShallNotPass
+on: [push]
+jobs:
+    golangci-lint:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out Repository
+              uses: actions/checkout@v4
+
+            - name: Run Golangci-Lint
+              uses: golangci/golangci-lint-action@v3
+              with:
+                version: v1.53
+
+    shellcheck-lint:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out Repository
+              uses: actions/checkout@v4
+              
+            - name: Run ShellCheck
+              uses: ludeeus/action-shellcheck@master

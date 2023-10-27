@@ -1,0 +1,46 @@
+version: "3"
+services:
+
+  youshallnotpass_builder_daemon:
+    build:
+      context: ../../../
+      dockerfile: testing/Dockerfiles/Dockerfile-dev
+    volumes:
+      - usr_local_bin:/usr/local/bin
+      - ../../../:/app
+
+  gitlab_runner:
+    build:
+      context: ../../../
+      dockerfile: testing/Dockerfiles/Dockerfile-gitlab
+    environment:
+      VAULT_ADDR: "http://vault:8200"
+      VAULT_EXTERNAL_ADDR: "http://localhost:8200"
+      DOCKER_RUN_ARGS: --volume hashicorp_gitlab_fail_git_repo:/gitrepo
+      GIT_STRATEGY: clone
+      YOUSHALLNOTPASS_GENERATE_JWT: "true"
+      CI_PROJECT_PATH: youshallnotpass/demo
+      CI_PROJECT_NAMESPACE: youshallnotpass
+    working_dir: /gitrepo
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../../../custom_executors/gitlab_custom_executor:/var/gitlab_custom_executor
+      - git_repo:/gitrepo
+      - usr_local_bin:/usr/local/bin
+      - certs:/certs
+    command: |
+      exec custom fail_job
+
+  git_repo_init:
+    image: alpine/git
+    volumes:
+      - ./../../scripts/git-init.sh:/git-init.sh
+      - git_repo:/gitrepo
+    entrypoint: /bin/sh
+    working_dir: /gitrepo
+    command: /git-init.sh
+
+volumes:
+  git_repo:
+  usr_local_bin:
+  certs:

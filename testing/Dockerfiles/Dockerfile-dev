@@ -1,0 +1,13 @@
+FROM alpine:3.18.4@sha256:eece025e432126ce23f223450a0326fbebde39cdf496a85d8c016293fc851978
+
+WORKDIR /app
+COPY . .
+RUN apk update && \
+    apk add go && \
+    go mod download && \
+    go mod verify && \
+    GO111MODULE=on go get github.com/githubnemo/CompileDaemon && \
+    go install github.com/githubnemo/CompileDaemon && \
+    go build -o /usr/local/bin/youshallnotpass .
+
+ENTRYPOINT /root/go/bin/CompileDaemon --build="go build -o /usr/local/bin/youshallnotpass"

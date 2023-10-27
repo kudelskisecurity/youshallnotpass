@@ -1,0 +1,51 @@
+name: YouShallNotPass Release
+run-name: Create Release for YouShallNotPass
+on:
+    push:
+        tags:
+            '[0-9].[0-9].[0-9]'
+
+jobs:
+    create-release:
+        permissions: write-all
+        runs-on: ubuntu-latest
+        steps:
+            - name: Create Changelog
+              uses: heinrichreimer/github-changelog-generator-action@v2.3
+              id: Changelog
+              with:
+                token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Check out Repository
+              uses: actions/checkout@v4
+
+            - name: Add Custom Executors to Artifacts
+              run: |
+                cd custom_executors
+                zip -r github_custom_executor.zip github_custom_executor
+                zip -r gitlab_custom_executor.zip gitlab_custom_executor
+                cd ..
+              working-directory: ${{ github.workspace }}
+
+            - name: Set Up Go
+              uses: actions/setup-go@v4
+              with:
+                go-version: '1.20'
+
+            - name: Create YouShallNotPass Binary
+              run: |
+                go build -o youshallnotpass
+
+            - name: Upload Artifacts and Create Release
+              uses: softprops/action-gh-release@v1
+              with:
+                tag_name: ${{ github.ref }}
+                name: Release ${{ github.ref_name }}
+                body: |
+                    ${{ steps.Changelog.outputs.changelog }}
+                draft: false
+                prerelease: false
+                files: |
+                    custom_executors/github_custom_executor.zip
+                    custom_executors/gitlab_custom_executor.zip
+                    youshallnotpass

@@ -1,0 +1,75 @@
+name: Run test jobs to validate with YSNP
+on: workflow_dispatch
+
+jobs:
+  Test-job-default-conf-ask-mfa-YSNP:
+    runs-on: self-hosted
+    steps:
+      - name: Check out Repository
+        uses: actions/checkout@v4
+      - run: echo "Job is run after YSNP verification using default checks - fallbacked to user check!"
+
+  Test-job-image-check-YSNP:
+    runs-on: self-hosted
+    container:
+      image: alpine:3.18.4@sha256:eece025e432126ce23f223450a0326fbebde39cdf496a85d8c016293fc851978
+    steps:
+      - name: Check out Repository
+        uses: actions/checkout@v4
+      - run: |
+          echo "Job is run after YSNP verification using image + job checks!"
+
+  Test-job-only-ask-mfa-YSNP:
+    runs-on: self-hosted
+    steps:
+      - name: Check out Repository
+        uses: actions/checkout@v4
+      - run: echo "Job is run after YSNP verification using only user check!"
+
+  Test-job-all-checks-YSNP:
+    runs-on: self-hosted
+    container:
+      image: alpine:3.18.4@sha256:eece025e432126ce23f223450a0326fbebde39cdf496a85d8c016293fc851978
+    steps:
+      - name: Check out Repository
+        uses: actions/checkout@v4
+      - run: echo "Job is run after YSNP verification using image + script + hash check!"
+
+# this is the whitelist config on Vault
+# echo -n '{
+#   "allowed_images": [
+#     "alpine:3.18.4@sha256:eece025e432126ce23f223450a0326fbebde39cdf496a85d8c016293fc851978"
+#   ],
+#   "allowed_scripts": [
+#     "Test-job-image-check-YSNP@sha256:DoBpHT_168adOHRIj5O1bYkai3qrtyvmgNPKNgeID8U=",
+#     "Test-job-all-checks-YSNP@sha256:IgO3t_wZKFABuLyUBeQs6wQLvHl476rQFcyBm9GCAAE="
+#   ]
+# }' | vault kv put your_mount_root/your_github_username_or_organization/project_name/whitelist -
+
+# this is the youshallnotpass_config on Vault
+# echo -n '{
+#   "jobs": [
+#     {
+#       "jobName": "Test-job-only-ask-mfa-YSNP",
+#       "checks": [
+#         {
+#           "name": "mfaRequired"
+#         }
+#       ]
+#     },
+#     {
+#       "jobName": "Test-job-all-checks-YSNP",
+#       "checks": [
+#         {
+#           "name": "mfaRequired"
+#         },
+#         {
+#           "name": "imageHash"
+#         },
+#         {
+#           "name": "scriptHash"
+#         }
+#       ]
+#     }
+#   ]
+# }' | vault kv put your_mount_root/your_github_username_or_organization/project_name/youshallnotpass_config -
