@@ -7,6 +7,7 @@ fi
 
 if [ ! -f "/certs/private-key.pem" ] && [ ! -f "/certs/public-key.pem" ]; then
     echo "Generate Pub/Private keys for JWT tokens"
+    mkdir /certs/
     openssl genrsa -out /certs/private-key.pem 3072
     openssl rsa -in /certs/private-key.pem -pubout -out /certs/public-key.pem
 fi
