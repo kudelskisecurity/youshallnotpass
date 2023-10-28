@@ -263,12 +263,12 @@ For projects that are not listed in the project config, they will use the follow
 
 ### Description
 
-For GitLab, the custom executor is used to run our custom
+For GitLab, the custom executor is used to run our custom (<- our custom what?)
 
 
 ### Steps
 
-1. Download the latest `youshallnotpass` binary and `gitlab_custom_executor.zip` file from the releases section of this project, copy and extract the contents into a directory `/path/to/gitlab-runner/` on the machine where you want to install the GitLab runner. Make sure the scripts are executable. In addition, create two directories in `/path/to/gitlab-runner/`: builds, and cache.
+1. Download the latest `youshallnotpass` binary and `gitlab_custom_executor.zip` file from the [releases](https://github.com/kudelskisecurity/youshallnotpass/releases/latest) section, copy and extract the contents into a directory `/path/to/gitlab-runner/` on the machine where you want to install the GitLab runner. Make sure the scripts are executable. In addition, create two directories in `/path/to/gitlab-runner/`: builds, and cache.
 
 2. Update the profile.sh information from the GitLab executor release you downloaded earlier.
 
@@ -280,7 +280,7 @@ export VAULT_ADDR="http://your_vault_address"
 export VAULT_EXTERNAL_ADDR="Same as Vault Addr, only different for local testing"
 ```
 
-3. Follow the GitLab instructions to download the runner and then register it to utilize the custom executor
+3. Install the runner for you system following [GitLab's instructions](https://docs.gitlab.com/runner/install/) and then register it to utilize the custom executor.
 
 ```sh
 gitlab-runner register \
@@ -298,7 +298,7 @@ gitlab-runner register \
 
 Note that GitLab is deprecating `--registration-token` to use `--token` so choose appropriately depending on how/when you do this.
 
-4. Add an ID Token named VAULT_ID_TOKEN or CI_JOB_JWT with the vault instance address as the audience claim (if both present VAULT_ID_TOKEN takes priority over CI_JOB_JWT)
+4. Add an ID Token named VAULT_ID_TOKEN or CI_JOB_JWT with the vault instance address as the audience claim (if both present VAULT_ID_TOKEN takes priority over CI_JOB_JWT) inside the `.gitlab-ci.yml` file in your project.
 
 ```yaml
 stages:
@@ -311,7 +311,7 @@ test_job:
   stage: test
   id_tokens:
     VAULT_ID_TOKEN:
-      aud: ["http://gitlab.example.com"]
+      aud: ["https://gitlab.example.com"]
   script:
     - echo "Vault Token Example"
 
@@ -319,7 +319,7 @@ test_job_two:
   stage: test
   id_tokens:
     CI_JOB_JWT:
-      aud: ["http://gitlab.example.com"]
+      aud: ["https://gitlab.example.com"]
   script:
     - echo "CI Job JWT Token Example"
 ```
@@ -334,7 +334,7 @@ vault auth enable -path=jwt/gitlab.example.com jwt
 
 ```sh
 vault write auth/jwt/gitlab.example.com/config \
-  bond_issuer="gitlab.example.com" \
+  bound_issuer="https://gitlab.example.com" \
   default_role="your-default-role" \
   oidc_discovery_url="https://gitlab.example.com"
 ```
