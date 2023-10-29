@@ -29,7 +29,7 @@ if [ "$MFA_REQUIRED" == true ] && [ "$CONTAINS_SCRIPT" == true ]; then
     export RUNNER_SCRIPT
     RUNNER_SCRIPT=$(grep -oE "x1b.32;1m.*" < "$1")
     # shellcheck disable=SC1003
-    RUNNER_SCRIPT=$(echo "$RUNNER_SCRIPT" | tr -d '\')
+    RUNNER_SCRIPT=$(echo "$RUNNER_SCRIPT" | tr -d '\\')
 
     # Find the scripts
     SCRIPTS=$(echo "$RUNNER_SCRIPT" | grep -oE "(./|/|[a-zA-Z0-9_-])([a-zA-Z0-9_-]*/){0,}.{0,1}[a-zA-Z0-9_-]*\.(sh|py|ps1|rb|js)")
