@@ -263,7 +263,7 @@ For projects that are not listed in the project config, they will use the follow
 
 ### Description
 
-For GitLab, the custom executor is used to run our custom (<- our custom what?)
+For GitLab, the custom executor is used to call YouShallNotPass
 
 
 ### Steps
