@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/hashicorp/vault/api v1.10.0
 	github.com/mattermost/mattermost/server/public v0.0.9
-	github.com/urfave/cli/v2 v2.25.7
+	github.com/urfave/cli/v2 v2.27.1
 )
 
 require (
